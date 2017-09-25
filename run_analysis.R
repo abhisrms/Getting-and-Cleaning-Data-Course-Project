@@ -64,11 +64,10 @@ names(final_data)<-gsub("AccJerk","LinearJerk",names(final_data))
 names(final_data)<-gsub("GyroJerk","AngularJerk",names(final_data))
 names(final_data)<-gsub("Acc","LinearAcceleration",names(final_data))
 names(final_data)<-gsub("Gyro","AngularVelocity",names(final_data))
-final_data <- final_data %>% select(-observationPurpose)
+final_data <- final_data %>% select(-DataSet)
+
 
 # 5. CALCULATE AVERAGE OF EACH VARIABLE FOR EACH ACTIVITY AND EACH SUBJECT
-meltdata<-melt(final_data, id.vars = c("subjectID","activityName"))
-meltdata<- tbl_df(meltdata)
-tidydata<- meltdata %>% group_by(subjectID,activityName,variable) %>% summarize(average=mean(value))
-names(tidydata)[3] <- "feature"
+
+tidydata <- group_by(final_data,subjectID,activityName) %>% summarize_all (funs(mean))
 write.table(tidydata,file = "tidy.txt",row.names = FALSE)
